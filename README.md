@@ -56,11 +56,12 @@ ai-multi-llm-service/
 ## Run
 
 ```bash
-cd ai-multi-llm-service
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-cp .env.example .env
+Step	Windows CMD	Windows PowerShell	Mac/Linux
+Enter project	cd ai-multi-llm-service	same	same
+Create venv	python -m venv .venv	python -m venv .venv	python3 -m venv .venv
+Activate	.venv\Scripts\activate	.venv\Scripts\Activate.ps1	source .venv/bin/activate
+Install	pip install -r requirements.txt	same	same
+Create .env	copy .env.example .env	Copy-Item .env.example .env	cp .env.example .env
 ```
 
 Put both keys in `.env`:
