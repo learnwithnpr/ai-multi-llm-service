@@ -12,11 +12,11 @@ def load_keys() -> None:
     load_dotenv(dotenv_path=ENV_FILE, override=True)
 
 
-def get_openai_api_key() -> str | None:
+def get_openai_api_key() -> str:
     load_keys()
     return os.getenv("OPENAI_API_KEY")
 
 
-def get_groq_api_key() -> str | None:
+def get_groq_api_key() -> str:
     load_keys()
     return os.getenv("GROQ_API_KEY")

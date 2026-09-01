@@ -1,0 +1,33 @@
+# Virtual environments
+nprenv/
+venv/
+.venv/
+env/
+
+# Secrets and local config
+.env
+.env.*
+!.env.example
+
+# Git and IDE
+.git/
+.gitignore
+.cursor/
+.vscode/
+.idea/
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Logs and local data
+logs/
+*.log
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+.dockerignore
