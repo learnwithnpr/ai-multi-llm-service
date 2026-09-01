@@ -1,4 +1,9 @@
 fastapi
 uvicorn
 openai
+groq
 python-dotenv
+python-multipart
+chromadb
+langchain
+langchain-text-splitters

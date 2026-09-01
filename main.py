@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.routes.chat import router as chat_router
+from app.routes.rag import router as rag_router
 
 
 app = FastAPI(
@@ -22,6 +23,7 @@ app.add_middleware(
 )
 
 app.include_router(chat_router, prefix="/api")
+app.include_router(rag_router, prefix="/api")   # RAG: document upload endpoint
 
 
 @app.get("/")
