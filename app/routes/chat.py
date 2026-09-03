@@ -47,8 +47,10 @@ def chat(request: ChatRequest):
         # ──────────────────────────────────────────────────────────────────────
         retrieved_context_chunks = chroma_service.retrieve_relevant_chunks(
             user_query=request.prompt,
-            number_of_results=3,          # fetch the top 3 most relevant chunks
+            number_of_results=1,          # fetch the top 3 most relevant chunks
         )
+
+        logger.info("Retrieved chunks: %s", retrieved_context_chunks)
 
         logger.info(
             "RETRIEVE chunks_found=%d  prompt=%s",

@@ -22,3 +22,24 @@ def generate_response(prompt: str) -> str:
     )
 
     return response.output_text
+
+
+def get_embeddings(texts: list[str]) -> list[list[float]]:
+    """Convert a list of text strings into a list of embeddings (lists of floats)."""
+    api_key = get_openai_api_key()
+    if not api_key:
+        raise ValueError("OPENAI_API_KEY is missing. Put it in the .env file.")
+
+    client = OpenAI(api_key=api_key)
+
+    response = client.embeddings.create(
+        model="text-embedding-3-small",
+        input=texts,
+    )
+
+    return [item.embedding for item in response.data]
+
+
+def get_embedding(text: str) -> list[float]:
+    """Convert a single text string into an embedding."""
+    return get_embeddings([text])[0]

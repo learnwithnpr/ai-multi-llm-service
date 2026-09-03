@@ -22,8 +22,10 @@ import uuid
 
 import chromadb
 from chromadb.utils import embedding_functions
+from app.core.logger import get_logger
 
 from app.core.config import get_settings
+from app.services.openai_service import get_embeddings, get_embedding
 
 # ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -31,6 +33,7 @@ COLLECTION_NAME = "document_chunks"   # All uploaded docs share one collection.
                                        # Students: change this to namespace docs.
 EMBEDDING_MODEL = "text-embedding-3-small"   # Cheap, fast, great for teaching.
 
+logger = get_logger()
 
 # ── Internal helper: build the ChromaDB client + collection ──────────────────
 
@@ -49,18 +52,10 @@ def _get_chroma_collection() -> chromadb.Collection:
         port=settings.CHROMA_PORT,
     )
 
-    # OpenAIEmbeddingFunction converts text → numbers automatically.
-    # ChromaDB calls it for us every time we add or query documents.
-    openai_embedding_function = embedding_functions.OpenAIEmbeddingFunction(
-        api_key=settings.OPENAI_API_KEY,
-        model_name=EMBEDDING_MODEL,
-    )
-
     # get_or_create_collection: if the collection already exists, reuse it;
     # if not, create a new empty one.  Safe to call on every request.
     collection = chroma_client.get_or_create_collection(
         name=COLLECTION_NAME,
-        embedding_function=openai_embedding_function,
     )
 
     return collection
@@ -98,10 +93,13 @@ def add_documents_to_collection(
         unique_ids.append(chunk_id)
         metadata_list.append({"source_document": document_name})
 
+    # Explicitly generate embeddings for all chunk texts
+    chunk_embeddings = get_embeddings(text_chunks)
+    logger.info("Embedding generation complete %s",chunk_embeddings)
     # .add() sends all chunks to ChromaDB in one network call.
-    # ChromaDB calls the embedding function on each chunk automatically.
     collection.add(
         ids=unique_ids,
+        embeddings=chunk_embeddings, # We embed the chunks before adding them
         documents=text_chunks,       # raw text goes here
         metadatas=metadata_list,     # our custom metadata dict per chunk
     )
@@ -112,7 +110,7 @@ def add_documents_to_collection(
 
 def retrieve_relevant_chunks(
     user_query: str,
-    number_of_results: int = 3,
+    number_of_results: int = 1,
 ) -> list[str]:
     """Find the most relevant text chunks for a given user question.
 
@@ -135,10 +133,16 @@ def retrieve_relevant_chunks(
     if collection.count() == 0:
         return []
 
+    # Explicitly generate an embedding for the user's query
+    query_embedding = get_embedding(user_query)
+
     query_results = collection.query(
-        query_texts=[user_query],         # ChromaDB embeds this for us
+        query_embeddings=[query_embedding], # Semantic search using the embedded user query
         n_results=number_of_results,
     )
+
+    # logger.info("Query results %s",query_results)
+    logger.info("Query results id %s",query_results["ids"])
 
     # query_results["documents"] is a list-of-lists because you can query
     # multiple texts at once.  We queried one text, so we take index [0].
