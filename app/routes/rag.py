@@ -25,12 +25,20 @@ logger = get_logger()
 
 @router.post("/upload-document")
 def upload_document(uploaded_file: UploadFile):
-    """Upload a .txt file and store its contents in ChromaDB for RAG retrieval.
+    """Upload a document and store its contents in ChromaDB for RAG retrieval.
+
+    Supported file types:
+      .txt, .md, .csv, .log  — Plain text
+      .docx                  — Word documents
+      .pdf                   — PDF documents
+      .pptx                  — PowerPoint presentations
+      .html, .htm            — HTML files
+      .json                  — JSON files
 
     How to test in Swagger UI (/docs):
       1. Click on POST /api/upload-document.
       2. Click "Try it out".
-      3. Click "Choose File" and pick any .txt file from your computer.
+      3. Click "Choose File" and pick a file from your computer.
       4. Click "Execute".
       5. You should see { "message": "...", "total_chunks": N } in the response.
     """

@@ -7,3 +7,7 @@ python-multipart
 chromadb
 langchain
 langchain-text-splitters
+python-docx
+PyPDF2
+beautifulsoup4
+python-pptx
