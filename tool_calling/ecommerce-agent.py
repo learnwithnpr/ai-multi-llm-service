@@ -50,8 +50,9 @@ def check_invertory_details(name:str):
             product_id = product["id"]
             results.append({"success":True,"product":product["name"],
                 "invertory":list_of_inventories[product_id]})
-        if not results:
-            return {"success":False, "error": f"Product {product_id} not found"}
+    
+    if not results:
+        return {"success":False, "error": "Product not found"}
 
     return results
 
